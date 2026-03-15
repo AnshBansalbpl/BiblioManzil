@@ -69,9 +69,7 @@ const AdminDashboard: React.FC = () => {
     try {
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
@@ -129,29 +127,78 @@ const AdminDashboard: React.FC = () => {
 
           {/* Upload Blog */}
           <section className="bg-white p-8 rounded-2xl shadow-sm border border-stone-200">
-            <h2 className="text-2xl font-serif font-semibold mb-6">Upload Blog</h2>
+            <div className="flex items-center gap-3 mb-6">
+              <FileText className="w-6 h-6 text-stone-700" />
+              <h2 className="text-2xl font-serif font-semibold text-stone-900">
+                Upload Blog
+              </h2>
+            </div>
 
-            <form
-              onSubmit={(e) => handleSubmit(e, "/api/admin/blog", "blog")}
-              className="space-y-4"
-            >
-
+            <form onSubmit={(e) => handleSubmit(e, "/api/admin/blog", "blog")} className="space-y-4">
               <input name="title" placeholder="Title" required className="w-full border p-2 rounded" />
               <input name="slug" placeholder="Slug" required className="w-full border p-2 rounded" />
               <input name="tags" placeholder="Tags" className="w-full border p-2 rounded" />
               <textarea name="content" placeholder="Content" required className="w-full border p-2 rounded" />
               <input type="file" name="coverImage" accept="image/*" required />
 
-              <button className="w-full bg-stone-900 text-white py-2 rounded">
+              <button disabled={loading === "blog"} className="w-full bg-stone-900 text-white py-2 rounded flex justify-center items-center gap-2">
+                {loading === "blog" ? <Loader2 className="animate-spin" /> : <Upload />}
                 Upload Blog
               </button>
+            </form>
+          </section>
 
+          {/* Upload Book */}
+          <section className="bg-white p-8 rounded-2xl shadow-sm border border-stone-200">
+            <div className="flex items-center gap-3 mb-6">
+              <Book className="w-6 h-6 text-stone-700" />
+              <h2 className="text-2xl font-serif font-semibold text-stone-900">
+                Upload Book
+              </h2>
+            </div>
+
+            <form onSubmit={(e) => handleSubmit(e, "/api/admin/book", "book")} className="space-y-4">
+              <input name="title" placeholder="Title" required className="w-full border p-2 rounded" />
+              <input name="author" placeholder="Author" required className="w-full border p-2 rounded" />
+              <textarea name="description" placeholder="Description" required className="w-full border p-2 rounded" />
+              <input name="category" placeholder="Category" required className="w-full border p-2 rounded" />
+
+              <input type="file" name="coverImage" accept="image/*" required />
+              <input type="file" name="pdf" accept=".pdf" required />
+
+              <button disabled={loading === "book"} className="w-full bg-stone-900 text-white py-2 rounded flex justify-center items-center gap-2">
+                {loading === "book" ? <Loader2 className="animate-spin" /> : <Upload />}
+                Upload Book
+              </button>
+            </form>
+          </section>
+
+          {/* Upload Summary */}
+          <section className="bg-white p-8 rounded-2xl shadow-sm border border-stone-200">
+            <div className="flex items-center gap-3 mb-6">
+              <FileText className="w-6 h-6 text-stone-700" />
+              <h2 className="text-2xl font-serif font-semibold text-stone-900">
+                Upload Summary
+              </h2>
+            </div>
+
+            <form onSubmit={(e) => handleJsonSubmit(e, "/api/admin/summary", "summary")} className="space-y-4">
+              <input name="bookTitle" placeholder="Book Title" required className="w-full border p-2 rounded" />
+              <input name="author" placeholder="Author" required className="w-full border p-2 rounded" />
+              <input name="coverImage" placeholder="Cover Image URL" required className="w-full border p-2 rounded" />
+              <textarea name="summary" placeholder="Summary" required className="w-full border p-2 rounded" />
+              <input name="keyLessons" placeholder="Key Lessons (comma separated)" className="w-full border p-2 rounded" />
+              <input name="quotes" placeholder="Quotes (comma separated)" className="w-full border p-2 rounded" />
+
+              <button disabled={loading === "summary"} className="w-full bg-stone-900 text-white py-2 rounded flex justify-center items-center gap-2">
+                {loading === "summary" ? <Loader2 className="animate-spin" /> : <Upload />}
+                Upload Summary
+              </button>
             </form>
           </section>
 
           {/* Add Reel */}
           <section className="bg-white p-8 rounded-2xl shadow-sm border border-stone-200">
-
             <div className="flex items-center gap-3 mb-6">
               <Video className="w-6 h-6 text-stone-700" />
               <h2 className="text-2xl font-serif font-semibold text-stone-900">
@@ -159,41 +206,15 @@ const AdminDashboard: React.FC = () => {
               </h2>
             </div>
 
-            <form
-              onSubmit={(e) =>
-                handleJsonSubmit(e, "/api/reels/admin", "reel")
-              }
-              className="space-y-4"
-            >
+            <form onSubmit={(e) => handleJsonSubmit(e, "/api/reels/admin", "reel")} className="space-y-4">
+              <input name="title" placeholder="Title" required className="w-full border p-2 rounded" />
+              <input name="instagramUrl" placeholder="https://www.instagram.com/reel/..." required className="w-full border p-2 rounded" />
 
-              <input
-                name="title"
-                placeholder="Title"
-                required
-                className="w-full px-4 py-2 rounded-lg border border-stone-200"
-              />
-
-              <input
-                name="instagramUrl"
-                placeholder="https://www.instagram.com/reel/..."
-                required
-                className="w-full px-4 py-2 rounded-lg border border-stone-200"
-              />
-
-              <button
-                disabled={loading === "reel"}
-                className="w-full bg-stone-900 text-white py-3 rounded-xl flex items-center justify-center gap-2"
-              >
-                {loading === "reel" ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <Video className="w-5 h-5" />
-                )}
+              <button disabled={loading === "reel"} className="w-full bg-stone-900 text-white py-2 rounded flex justify-center items-center gap-2">
+                {loading === "reel" ? <Loader2 className="animate-spin" /> : <Video />}
                 Add Reel
               </button>
-
             </form>
-
           </section>
 
         </div>
