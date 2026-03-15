@@ -17,7 +17,7 @@ export default function Footer() {
             <a href="#" className="p-2 bg-white border rounded-lg hover:bg-neutral-100 transition-colors">
               <Twitter className="w-5 h-5" />
             </a>
-            <a href="#" className="p-2 bg-white border rounded-lg hover:bg-neutral-100 transition-colors">
+            <a href="https://github.com/AnshBansalbpl" className="p-2 bg-white border rounded-lg hover:bg-neutral-100 transition-colors">
               <Github className="w-5 h-5" />
             </a>
           </div>
