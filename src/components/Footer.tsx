@@ -36,7 +36,7 @@ export default function Footer() {
         <div>
           <h4 className="font-semibold mb-4">Support</h4>
           <ul className="space-y-2 text-neutral-500 text-sm">
-            <li><a href="#" className="hover:text-black">Contact Us</a></li>
+            <li><a href="bibliomanzil@gmail.com" className="hover:text-black">Contact Us</a></li>
             <li><a href="#" className="hover:text-black">Privacy Policy</a></li>
             <li><a href="#" className="hover:text-black">Terms of Service</a></li>
             <li className="flex items-center gap-2">
