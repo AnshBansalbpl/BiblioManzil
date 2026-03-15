@@ -1,7 +1,4 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
-import path from "path";
-import { fileURLToPath } from "url";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -13,9 +10,6 @@ import reelRoutes from "./src/routes/reelRoutes.js";
 import bookmarkRoutes from "./src/routes/bookmarkRoutes.js";
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
@@ -31,12 +25,12 @@ async function startServer() {
 
   app.use(express.json());
 
-  // Root route (important for Render)
+  // Root route
   app.get("/", (req, res) => {
     res.send("BiblioManzil API is running 🚀");
   });
 
-  // Health check route
+  // Health check
   app.get("/api/health", (req, res) => {
     res.json({
       status: "ok",
@@ -44,24 +38,24 @@ async function startServer() {
     });
   });
 
-  // MongoDB Connection
+  // MongoDB connection
   const MONGODB_URI = process.env.MONGODB_URI;
 
   if (!MONGODB_URI) {
-    console.error("❌ ERROR: MONGODB_URI not found in environment variables.");
+    console.error("❌ MONGODB_URI not defined");
   } else {
     try {
       await mongoose.connect(MONGODB_URI, {
         serverSelectionTimeoutMS: 5000,
       });
+
       console.log("✅ Connected to MongoDB Atlas");
     } catch (err) {
-      console.error("❌ MongoDB connection failed");
-      console.error(err);
+      console.error("❌ MongoDB connection error", err);
     }
   }
 
-  // API Routes
+  // API routes
   app.use("/api/blogs", blogRoutes);
   app.use("/api/blog", blogRoutes);
 
@@ -75,25 +69,6 @@ async function startServer() {
 
   app.use("/api/bookmark", bookmarkRoutes);
   app.use("/api/bookmarks", bookmarkRoutes);
-
-  // Development mode with Vite
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-
-    app.use(vite.middlewares);
-  } else {
-    // Production build
-    const distPath = path.join(process.cwd(), "dist");
-
-    app.use(express.static(distPath));
-
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
-  }
 
   // Start server
   app.listen(PORT, "0.0.0.0", () => {
