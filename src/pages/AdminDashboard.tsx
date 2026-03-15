@@ -205,24 +205,47 @@ const AdminDashboard: React.FC = () => {
 
           {/* Add Reel Section */}
           <section className="bg-white p-8 rounded-2xl shadow-sm border border-stone-200">
-            <div className="flex items-center gap-3 mb-6">
-              <Video className="w-6 h-6 text-stone-700" />
-              <h2 className="text-2xl font-serif font-semibold text-stone-900">Add Reel</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <Video className="w-6 h-6 text-stone-700" />
+            <h2 className="text-2xl font-serif font-semibold text-stone-900">Add Reel</h2>
+          </div>
+          
+          <form onSubmit={(e) => handleJsonSubmit(e, "/api/reels/admin", "reel")} className="space-y-4">
+          
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1">
+                Title
+              </label>
+              <input
+                name="title"
+                required
+                className="w-full px-4 py-2 rounded-lg border border-stone-200 focus:ring-2 focus:ring-stone-500 outline-none"
+              />
             </div>
-            <form onSubmit={(e) => handleJsonSubmit(e, "/api/admin/reel", "reel")} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1">Title</label>
-                <input name="title" required className="w-full px-4 py-2 rounded-lg border border-stone-200 focus:ring-2 focus:ring-stone-500 outline-none transition-all" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1">Instagram Embed URL</label>
-                <input name="instagramEmbedUrl" required placeholder="https://www.instagram.com/reels/..." className="w-full px-4 py-2 rounded-lg border border-stone-200 focus:ring-2 focus:ring-stone-500 outline-none transition-all" />
-              </div>
-              <button disabled={loading === "reel"} className="w-full bg-stone-900 text-white py-3 rounded-xl font-medium hover:bg-stone-800 transition-colors flex items-center justify-center gap-2">
-                {loading === "reel" ? <Loader2 className="w-5 h-5 animate-spin" /> : <Video className="w-5 h-5" />}
-                Add Reel
-              </button>
-            </form>
+          
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1">
+                Instagram Reel URL
+              </label>
+              <input
+                name="instagramUrl"
+                required
+                placeholder="https://www.instagram.com/reel/..."
+                className="w-full px-4 py-2 rounded-lg border border-stone-200 focus:ring-2 focus:ring-stone-500 outline-none"
+              />
+            </div>
+          
+            <button
+              disabled={loading === "reel"}
+              className="w-full bg-stone-900 text-white py-3 rounded-xl font-medium hover:bg-stone-800 transition-colors flex items-center justify-center gap-2"
+            >
+              {loading === "reel"
+                ? <Loader2 className="w-5 h-5 animate-spin" />
+                : <Video className="w-5 h-5" />}
+              Add Reel
+            </button>
+          
+          </form>
           </section>
         </div>
       </div>
