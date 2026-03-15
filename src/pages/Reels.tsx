@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Loader2, Video, ExternalLink, Play } from "lucide-react";
+import { Loader2, Video, ExternalLink } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || "https://bibliomanzil.onrender.com";
 
@@ -13,7 +13,6 @@ interface Reel {
 const Reels: React.FC = () => {
   const [reels, setReels] = useState<Reel[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeReel, setActiveReel] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`${API_URL}/api/reels`)
@@ -76,28 +75,12 @@ const Reels: React.FC = () => {
 
                 <div className="aspect-[9/16] bg-stone-100 relative">
 
-                  {activeReel === reel._id ? (
-
-                    <iframe
-                      src={embedUrl}
-                      className="w-full h-full border-0"
-                      allow="encrypted-media"
-                      title={reel.title}
-                    ></iframe>
-
-                  ) : (
-
-                    <button
-                      onClick={() => setActiveReel(reel._id)}
-                      className="w-full h-full flex flex-col items-center justify-center bg-stone-100 hover:bg-stone-200 transition"
-                    >
-                      <Play className="w-10 h-10 text-stone-700 mb-2" />
-                      <span className="text-sm text-stone-600">
-                        Play Reel
-                      </span>
-                    </button>
-
-                  )}
+                  <iframe
+                    src={embedUrl}
+                    className="w-full h-full border-0"
+                    allow="encrypted-media"
+                    title={reel.title}
+                  ></iframe>
 
                 </div>
 
