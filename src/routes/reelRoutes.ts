@@ -3,7 +3,7 @@ import { Reel } from "../models/Schemas.js";
 
 const router = Router();
 
-// GET /api/reels
+/* GET reels */
 router.get("/", async (req, res) => {
   try {
     const reels = await Reel.find().sort({ createdAt: -1 });
@@ -13,14 +13,33 @@ router.get("/", async (req, res) => {
   }
 });
 
-// POST /api/admin/reel
+/* CREATE reel */
 router.post("/admin", async (req, res) => {
   try {
-    const newReel = new Reel(req.body);
+
+    const { title, instagramUrl } = req.body;
+
+    if (!title || !instagramUrl) {
+      return res.status(400).json({
+        message: "Title and Instagram URL are required"
+      });
+    }
+
+    const newReel = new Reel({
+      title,
+      instagramUrl
+    });
+
     const savedReel = await newReel.save();
+
     res.status(201).json(savedReel);
+
   } catch (error) {
-    res.status(400).json({ message: "Error creating reel", error });
+    console.error("Reel creation error:", error);
+    res.status(500).json({
+      message: "Error creating reel",
+      error: error.message
+    });
   }
 });
 
