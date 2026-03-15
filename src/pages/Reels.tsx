@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Loader2, Video, ExternalLink } from "lucide-react";
+import { Loader2, Video, ExternalLink, Play } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || "https://bibliomanzil.onrender.com";
 
@@ -13,6 +13,7 @@ interface Reel {
 const Reels: React.FC = () => {
   const [reels, setReels] = useState<Reel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeReel, setActiveReel] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`${API_URL}/api/reels`)
@@ -27,7 +28,6 @@ const Reels: React.FC = () => {
       });
   }, []);
 
-  // Convert Instagram reel URL to embed URL
   const getEmbedUrl = (url: string) => {
     const reelId = url.split("/reel/")[1]?.split("/")[0];
     return `https://www.instagram.com/reel/${reelId}/embed`;
@@ -43,6 +43,7 @@ const Reels: React.FC = () => {
 
   return (
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
+
       <header className="mb-12 text-center">
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-4">
           Daily Motivation
@@ -59,41 +60,71 @@ const Reels: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-          {reels.map((reel) => (
-            <motion.div
-              key={reel._id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm flex flex-col"
-            >
-              <div className="aspect-[9/16] bg-stone-100 relative group">
-                <iframe
-                  src={getEmbedUrl(reel.instagramUrl)}
-                  className="w-full h-full border-0"
-                  allow="encrypted-media"
-                  title={reel.title}
-                ></iframe>
-              </div>
 
-              <div className="p-6 flex items-center justify-between">
-                <h2 className="font-bold text-stone-900 line-clamp-1">
-                  {reel.title}
-                </h2>
+          {reels.map((reel) => {
 
-                <a
-                  href={reel.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 bg-stone-50 rounded-full text-stone-400 hover:text-stone-900 transition-colors"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              </div>
-            </motion.div>
-          ))}
+            const embedUrl = getEmbedUrl(reel.instagramUrl);
+
+            return (
+              <motion.div
+                key={reel._id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm flex flex-col"
+              >
+
+                <div className="aspect-[9/16] bg-stone-100 relative">
+
+                  {activeReel === reel._id ? (
+
+                    <iframe
+                      src={embedUrl}
+                      className="w-full h-full border-0"
+                      allow="encrypted-media"
+                      title={reel.title}
+                    ></iframe>
+
+                  ) : (
+
+                    <button
+                      onClick={() => setActiveReel(reel._id)}
+                      className="w-full h-full flex flex-col items-center justify-center bg-stone-100 hover:bg-stone-200 transition"
+                    >
+                      <Play className="w-10 h-10 text-stone-700 mb-2" />
+                      <span className="text-sm text-stone-600">
+                        Play Reel
+                      </span>
+                    </button>
+
+                  )}
+
+                </div>
+
+                <div className="p-6 flex items-center justify-between">
+
+                  <h2 className="font-bold text-stone-900 line-clamp-1">
+                    {reel.title}
+                  </h2>
+
+                  <a
+                    href={reel.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 bg-stone-50 rounded-full text-stone-400 hover:text-stone-900 transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+
+                </div>
+
+              </motion.div>
+            );
+          })}
+
         </div>
       )}
+
     </div>
   );
 };
