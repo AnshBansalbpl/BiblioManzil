@@ -11,7 +11,7 @@ export default function Footer() {
             Empowering readers to reach their full potential, one page at a time.
           </p>
           <div className="flex gap-4 mt-6">
-            <a href="#" className="p-2 bg-white border rounded-lg hover:bg-neutral-100 transition-colors">
+            <a href="https://www.instagram.com/bibliomanzil/" className="p-2 bg-white border rounded-lg hover:bg-neutral-100 transition-colors">
               <Instagram className="w-5 h-5" />
             </a>
             <a href="#" className="p-2 bg-white border rounded-lg hover:bg-neutral-100 transition-colors">
