@@ -1,6 +1,8 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// --- TypeScript Interfaces ---
+/* =========================
+   TypeScript Interfaces
+========================= */
 
 export interface IUser extends Document {
   firebaseUID: string;
@@ -42,18 +44,20 @@ export interface ISummary extends Document {
 
 export interface IReel extends Document {
   title: string;
-  instagramEmbedUrl: string;
+  instagramUrl: string;
   createdAt: Date;
 }
 
 export interface IBookmark extends Document {
-  userId: string; // Firebase UID or MongoDB ObjectId
+  userId: string;
   contentType: "blog" | "summary" | "book";
   contentId: mongoose.Types.ObjectId;
   createdAt: Date;
 }
 
-// --- Mongoose Schemas ---
+/* =========================
+   Schemas
+========================= */
 
 const UserSchema = new Schema<IUser>({
   firebaseUID: { type: String, required: true, unique: true },
@@ -95,77 +99,40 @@ const SummarySchema = new Schema<ISummary>({
 
 const ReelSchema = new Schema<IReel>({
   title: { type: String, required: true },
-  instagramEmbedUrl: { type: String, required: true },
+  instagramUrl: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
 const BookmarkSchema = new Schema<IBookmark>({
-  userId: { type: String, required: true }, // Using Firebase UID for easier lookup
-  contentType: { type: String, enum: ["blog", "summary", "book"], required: true },
+  userId: { type: String, required: true },
+  contentType: {
+    type: String,
+    enum: ["blog", "summary", "book"],
+    required: true,
+  },
   contentId: { type: Schema.Types.ObjectId, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
-// --- Model Exports ---
+/* =========================
+   Model Exports
+========================= */
 
-export const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
-export const Blog: Model<IBlog> = mongoose.models.Blog || mongoose.model<IBlog>("Blog", BlogSchema);
-export const Book: Model<IBook> = mongoose.models.Book || mongoose.model<IBook>("Book", BookSchema);
-export const Summary: Model<ISummary> = mongoose.models.Summary || mongoose.model<ISummary>("Summary", SummarySchema);
-export const Reel: Model<IReel> = mongoose.models.Reel || mongoose.model<IReel>("Reel", ReelSchema);
-export const Bookmark: Model<IBookmark> = mongoose.models.Bookmark || mongoose.model<IBookmark>("Bookmark", BookmarkSchema);
+export const User: Model<IUser> =
+  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
 
-/**
- * --- Example Documents ---
- * 
- * User:
- * {
- *   firebaseUID: "abc123user",
- *   name: "John Doe",
- *   email: "john@example.com",
- *   profileImage: "https://example.com/profile.jpg"
- * }
- * 
- * Blog:
- * {
- *   title: "The Power of Habit",
- *   slug: "the-power-of-habit",
- *   content: "Full blog content here...",
- *   coverImage: "https://example.com/blog-cover.jpg",
- *   tags: ["motivation", "habits"]
- * }
- * 
- * Book:
- * {
- *   title: "Atomic Habits",
- *   author: "James Clear",
- *   description: "An easy and proven way to build good habits...",
- *   category: "Self-Help",
- *   coverImage: "https://example.com/book-cover.jpg",
- *   pdfUrl: "https://example.com/atomic-habits.pdf",
- *   downloads: 150
- * }
- * 
- * Summary:
- * {
- *   bookTitle: "Deep Work",
- *   author: "Cal Newport",
- *   coverImage: "https://example.com/deep-work.jpg",
- *   summary: "Rules for focused success in a distracted world...",
- *   keyLessons: ["Work deeply", "Embrace boredom", "Quit social media"],
- *   quotes: ["Focus is the new IQ."]
- * }
- * 
- * Reel:
- * {
- *   title: "Morning Routine for Success",
- *   instagramEmbedUrl: "https://www.instagram.com/reels/C_example/"
- * }
- * 
- * Bookmark:
- * {
- *   userId: "abc123user",
- *   contentType: "book",
- *   contentId: "65f1234567890abcdef12345"
- * }
- */
+export const Blog: Model<IBlog> =
+  mongoose.models.Blog || mongoose.model<IBlog>("Blog", BlogSchema);
+
+export const Book: Model<IBook> =
+  mongoose.models.Book || mongoose.model<IBook>("Book", BookSchema);
+
+export const Summary: Model<ISummary> =
+  mongoose.models.Summary || mongoose.model<ISummary>("Summary", SummarySchema);
+
+export const Reel: Model<IReel> =
+  mongoose.models.Reel || mongoose.model<IReel>("Reel", ReelSchema);
+
+export const Bookmark: Model<IBookmark> =
+  mongoose.models.Bookmark ||
+  mongoose.model<IBookmark>("Bookmark", BookmarkSchema);
