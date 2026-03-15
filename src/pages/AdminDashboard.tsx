@@ -134,7 +134,7 @@ const AdminDashboard: React.FC = () => {
               </h2>
             </div>
 
-            <form onSubmit={(e) => handleSubmit(e, "/api/admin/blog", "blog")} className="space-y-4">
+            <form onSubmit={(e) => handleSubmit(e, "/api/blog/admin", "blog")} className="space-y-4">
               <input name="title" placeholder="Title" required className="w-full border p-2 rounded" />
               <input name="slug" placeholder="Slug" required className="w-full border p-2 rounded" />
               <input name="tags" placeholder="Tags" className="w-full border p-2 rounded" />
@@ -157,7 +157,7 @@ const AdminDashboard: React.FC = () => {
               </h2>
             </div>
 
-            <form onSubmit={(e) => handleSubmit(e, "/api/admin/book", "book")} className="space-y-4">
+            <form onSubmit={(e) => handleSubmit(e, "/api/book/admin", "book")} className="space-y-4">
               <input name="title" placeholder="Title" required className="w-full border p-2 rounded" />
               <input name="author" placeholder="Author" required className="w-full border p-2 rounded" />
               <textarea name="description" placeholder="Description" required className="w-full border p-2 rounded" />
@@ -182,7 +182,7 @@ const AdminDashboard: React.FC = () => {
               </h2>
             </div>
 
-            <form onSubmit={(e) => handleJsonSubmit(e, "/api/admin/summary", "summary")} className="space-y-4">
+            <form onSubmit={(e) => handleJsonSubmit(e, "/api/summary/admin", "summary")} className="space-y-4">
               <input name="bookTitle" placeholder="Book Title" required className="w-full border p-2 rounded" />
               <input name="author" placeholder="Author" required className="w-full border p-2 rounded" />
               <input name="coverImage" placeholder="Cover Image URL" required className="w-full border p-2 rounded" />
