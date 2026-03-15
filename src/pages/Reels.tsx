@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Loader2, Video, ExternalLink } from "lucide-react";
+import { Loader2, Video, ExternalLink, Play } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL || "https://bibliomanzil.onrender.com";
 
@@ -58,6 +58,7 @@ const Reels: React.FC = () => {
           <p className="text-stone-500">No reels added yet. Check back soon!</p>
         </div>
       ) : (
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
 
           {reels.map((reel) => {
@@ -67,13 +68,16 @@ const Reels: React.FC = () => {
             return (
               <motion.div
                 key={reel._id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm flex flex-col"
+                whileHover={{ y: -6 }}
+                transition={{ duration: 0.3 }}
+                className="group bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg transition"
               >
 
-                <div className="aspect-[9/16] bg-stone-100 relative">
+                {/* Reel Container */}
+                <div className="relative aspect-[9/16] bg-black">
 
                   <iframe
                     src={embedUrl}
@@ -82,11 +86,17 @@ const Reels: React.FC = () => {
                     title={reel.title}
                   ></iframe>
 
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/20 transition pointer-events-none">
+                    <Play className="w-12 h-12 text-white drop-shadow-lg" />
+                  </div>
+
                 </div>
 
-                <div className="p-6 flex items-center justify-between">
+                {/* Reel Info */}
+                <div className="p-5 flex items-center justify-between">
 
-                  <h2 className="font-bold text-stone-900 line-clamp-1">
+                  <h2 className="font-semibold text-stone-900 line-clamp-1">
                     {reel.title}
                   </h2>
 
@@ -94,9 +104,9 @@ const Reels: React.FC = () => {
                     href={reel.instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 bg-stone-50 rounded-full text-stone-400 hover:text-stone-900 transition-colors"
+                    className="p-2 rounded-full bg-stone-100 hover:bg-stone-200 transition"
                   >
-                    <ExternalLink className="w-4 h-4" />
+                    <ExternalLink className="w-4 h-4 text-stone-600" />
                   </a>
 
                 </div>
@@ -106,8 +116,8 @@ const Reels: React.FC = () => {
           })}
 
         </div>
-      )}
 
+      )}
     </div>
   );
 };
