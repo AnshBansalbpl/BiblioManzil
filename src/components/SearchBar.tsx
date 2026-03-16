@@ -41,64 +41,44 @@ const SearchBar: React.FC = () => {
 
     const delayDebounceFn = setTimeout(async () => {
       setLoading(true);
+
       try {
-        const [blogsRes, booksRes, summariesRes] = await Promise.all([
-          fetch("/api/blogs"),
-          fetch("/api/books"),
-          fetch("/api/summaries"),
-        ]);
+        const res = await fetch(
+  `${import.meta.env.VITE_API_URL}/api/search?q=${encodeURIComponent(query)}`
+);
+        const data = await res.json();
 
-        const [blogsData, booksData, summariesData] = await Promise.all([
-          blogsRes.json(),
-          booksRes.json(),
-          summariesRes.json(),
-        ]);
+        const blogs = data.blogs.map((b: any) => ({
+          _id: b._id,
+          type: "blog",
+          title: b.title,
+          coverImage: b.coverImage,
+          slug: b.slug,
+        }));
 
-        const filteredBlogs = blogsData
-          .filter((b: any) =>
-            b.title.toLowerCase().includes(query.toLowerCase()) ||
-            b.tags.some((t: string) => t.toLowerCase().includes(query.toLowerCase()))
-          )
-          .map((b: any) => ({
-            _id: b._id,
-            type: "blog",
-            title: b.title,
-            coverImage: b.coverImage,
-            slug: b.slug,
-          }));
+        const books = data.books.map((b: any) => ({
+          _id: b._id,
+          type: "book",
+          title: b.title,
+          author: b.author,
+          coverImage: b.coverImage,
+        }));
 
-        const filteredBooks = booksData
-          .filter((b: any) =>
-            b.title.toLowerCase().includes(query.toLowerCase()) ||
-            b.author.toLowerCase().includes(query.toLowerCase())
-          )
-          .map((b: any) => ({
-            _id: b._id,
-            type: "book",
-            title: b.title,
-            author: b.author,
-            coverImage: b.coverImage,
-          }));
-
-        const filteredSummaries = summariesData
-          .filter((s: any) =>
-            s.bookTitle.toLowerCase().includes(query.toLowerCase()) ||
-            s.author.toLowerCase().includes(query.toLowerCase())
-          )
-          .map((s: any) => ({
-            _id: s._id,
-            type: "summary",
-            title: s.bookTitle,
-            author: s.author,
-            coverImage: s.coverImage,
-            slug: s.slug,
-          }));
+        const summaries = data.summaries.map((s: any) => ({
+          _id: s._id,
+          type: "summary",
+          title: s.bookTitle,
+          author: s.author,
+          coverImage: s.coverImage,
+          slug: s.slug,
+        }));
 
         setResults({
-          blogs: filteredBlogs,
-          books: filteredBooks,
-          summaries: filteredSummaries,
+          blogs,
+          books,
+          summaries,
         });
+
         setIsOpen(true);
       } catch (err) {
         console.error("Search error:", err);
@@ -113,17 +93,22 @@ const SearchBar: React.FC = () => {
   const handleSelect = (result: SearchResult) => {
     setQuery("");
     setIsOpen(false);
+
     if (result.type === "blog") navigate(`/blog/${result.slug}`);
     if (result.type === "book") navigate(`/book/${result._id}`);
     if (result.type === "summary") navigate(`/summary/${result.slug}`);
   };
 
-  const hasResults = results.blogs.length > 0 || results.books.length > 0 || results.summaries.length > 0;
+  const hasResults =
+    results.blogs.length > 0 ||
+    results.books.length > 0 ||
+    results.summaries.length > 0;
 
   return (
     <div className="relative w-full max-w-md" ref={searchRef}>
       <div className="relative group">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 group-focus-within:text-stone-900 transition-colors" />
+
         <input
           type="text"
           value={query}
@@ -132,6 +117,7 @@ const SearchBar: React.FC = () => {
           placeholder="Search blogs, books, summaries..."
           className="w-full bg-stone-100 border-none rounded-full py-2 pl-10 pr-10 text-sm focus:ring-2 focus:ring-stone-200 transition-all outline-none"
         />
+
         {query && (
           <button
             onClick={() => setQuery("")}
@@ -147,7 +133,9 @@ const SearchBar: React.FC = () => {
           {loading ? (
             <div className="p-8 text-center">
               <Loader2 className="w-6 h-6 animate-spin text-stone-400 mx-auto mb-2" />
-              <p className="text-xs text-stone-500">Searching BiblioManzil...</p>
+              <p className="text-xs text-stone-500">
+                Searching BiblioManzil...
+              </p>
             </div>
           ) : hasResults ? (
             <div className="p-2">
@@ -156,14 +144,21 @@ const SearchBar: React.FC = () => {
                   <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-stone-400 flex items-center gap-2">
                     <FileText className="w-3 h-3" /> Blogs
                   </div>
+
                   {results.blogs.map((b) => (
                     <button
                       key={b._id}
                       onClick={() => handleSelect(b)}
                       className="w-full flex items-center gap-3 p-2 hover:bg-stone-50 rounded-xl transition-colors text-left"
                     >
-                      <img src={b.coverImage} className="w-10 h-10 rounded-lg object-cover" referrerPolicy="no-referrer" />
-                      <span className="text-sm font-medium text-stone-900 line-clamp-1">{b.title}</span>
+                      <img
+                        src={b.coverImage}
+                        className="w-10 h-10 rounded-lg object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                      <span className="text-sm font-medium text-stone-900 line-clamp-1">
+                        {b.title}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -174,16 +169,25 @@ const SearchBar: React.FC = () => {
                   <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-stone-400 flex items-center gap-2">
                     <Book className="w-3 h-3" /> Books
                   </div>
+
                   {results.books.map((b) => (
                     <button
                       key={b._id}
                       onClick={() => handleSelect(b)}
                       className="w-full flex items-center gap-3 p-2 hover:bg-stone-50 rounded-xl transition-colors text-left"
                     >
-                      <img src={b.coverImage} className="w-10 h-14 rounded-md object-cover" referrerPolicy="no-referrer" />
+                      <img
+                        src={b.coverImage}
+                        className="w-10 h-14 rounded-md object-cover"
+                        referrerPolicy="no-referrer"
+                      />
                       <div>
-                        <p className="text-sm font-medium text-stone-900 line-clamp-1">{b.title}</p>
-                        <p className="text-[10px] text-stone-500 italic">by {b.author}</p>
+                        <p className="text-sm font-medium text-stone-900 line-clamp-1">
+                          {b.title}
+                        </p>
+                        <p className="text-[10px] text-stone-500 italic">
+                          by {b.author}
+                        </p>
                       </div>
                     </button>
                   ))}
@@ -195,16 +199,25 @@ const SearchBar: React.FC = () => {
                   <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-stone-400 flex items-center gap-2">
                     <BookOpen className="w-3 h-3" /> Summaries
                   </div>
+
                   {results.summaries.map((s) => (
                     <button
                       key={s._id}
                       onClick={() => handleSelect(s)}
                       className="w-full flex items-center gap-3 p-2 hover:bg-stone-50 rounded-xl transition-colors text-left"
                     >
-                      <img src={s.coverImage} className="w-10 h-14 rounded-md object-cover" referrerPolicy="no-referrer" />
+                      <img
+                        src={s.coverImage}
+                        className="w-10 h-14 rounded-md object-cover"
+                        referrerPolicy="no-referrer"
+                      />
                       <div>
-                        <p className="text-sm font-medium text-stone-900 line-clamp-1">{s.title}</p>
-                        <p className="text-[10px] text-stone-500 italic">by {s.author}</p>
+                        <p className="text-sm font-medium text-stone-900 line-clamp-1">
+                          {s.title}
+                        </p>
+                        <p className="text-[10px] text-stone-500 italic">
+                          by {s.author}
+                        </p>
                       </div>
                     </button>
                   ))}
@@ -213,7 +226,9 @@ const SearchBar: React.FC = () => {
             </div>
           ) : (
             <div className="p-8 text-center">
-              <p className="text-sm text-stone-500">No results found for "{query}"</p>
+              <p className="text-sm text-stone-500">
+                No results found for "{query}"
+              </p>
             </div>
           )}
         </div>

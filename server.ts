@@ -8,12 +8,13 @@ import bookRoutes from "./src/routes/bookRoutes.js";
 import summaryRoutes from "./src/routes/summaryRoutes.js";
 import reelRoutes from "./src/routes/reelRoutes.js";
 import bookmarkRoutes from "./src/routes/bookmarkRoutes.js";
+import searchRoutes from "./src/routes/searchRoutes.js";
 
 dotenv.config();
 
 async function startServer() {
   const app = express();
-  const PORT = process.env.PORT || 5000;
+  const PORT = Number(process.env.PORT) || 5000;
 
   /* =============================
      Middleware
@@ -23,7 +24,8 @@ async function startServer() {
     cors({
       origin: [
         "https://biblio-manzil.vercel.app",
-        "http://localhost:3000"
+        "http://localhost:3000",
+        "http://localhost:5173"
       ],
       credentials: true,
     })
@@ -89,6 +91,8 @@ async function startServer() {
 
   app.use("/api/bookmark", bookmarkRoutes);
   app.use("/api/bookmarks", bookmarkRoutes);
+
+  app.use("/api/search", searchRoutes);
 
   /* =============================
      Global Error Handler

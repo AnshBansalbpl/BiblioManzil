@@ -51,7 +51,7 @@ export interface IReel extends Document {
 export interface IBookmark extends Document {
   userId: string;
   contentType: "blog" | "summary" | "book";
-  contentId: string; // ✅ FIXED
+  contentId: string;
   createdAt: Date;
 }
 
@@ -76,6 +76,13 @@ const BlogSchema = new Schema<IBlog>({
   createdAt: { type: Date, default: Date.now },
 });
 
+/* ===== SEARCH INDEX ===== */
+BlogSchema.index({
+  title: "text",
+  content: "text",
+  tags: "text",
+});
+
 const BookSchema = new Schema<IBook>({
   title: { type: String, required: true },
   author: { type: String, required: true },
@@ -87,6 +94,13 @@ const BookSchema = new Schema<IBook>({
   createdAt: { type: Date, default: Date.now },
 });
 
+/* ===== SEARCH INDEX ===== */
+BookSchema.index({
+  title: "text",
+  author: "text",
+  description: "text",
+});
+
 const SummarySchema = new Schema<ISummary>({
   bookTitle: { type: String, required: true },
   author: { type: String, required: true },
@@ -95,6 +109,14 @@ const SummarySchema = new Schema<ISummary>({
   keyLessons: [{ type: String }],
   quotes: [{ type: String }],
   createdAt: { type: Date, default: Date.now },
+});
+
+/* ===== SEARCH INDEX ===== */
+SummarySchema.index({
+  bookTitle: "text",
+  author: "text",
+  summary: "text",
+  keyLessons: "text",
 });
 
 const ReelSchema = new Schema<IReel>({
@@ -116,7 +138,6 @@ const BookmarkSchema = new Schema<IBookmark>({
     required: true,
   },
 
-  // ✅ changed from ObjectId → String
   contentId: { type: String, required: true },
 
   createdAt: { type: Date, default: Date.now },
