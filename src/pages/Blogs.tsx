@@ -4,7 +4,8 @@ import { Loader2, Tag, Bookmark, Check, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://bibliomanzil.onrender.com";
+const API_URL =
+  import.meta.env.VITE_API_URL ?? "https://bibliomanzil.onrender.com";
 
 interface Blog {
   _id: string;
@@ -29,10 +30,13 @@ const Blogs: React.FC = () => {
       try {
         const blogsRes = await fetch(`${API_URL}/api/blogs`);
         const blogsData = await blogsRes.json();
-        setBlogs(blogsData);
+
+        setBlogs(Array.isArray(blogsData) ? blogsData : blogsData.blogs || []);
 
         if (user) {
-          const bookmarksRes = await fetch(`${API_URL}/api/bookmarks/${user.uid}`);
+          const bookmarksRes = await fetch(
+            `${API_URL}/api/bookmarks/${user.uid}`
+          );
           const bookmarksData = await bookmarksRes.json();
 
           const ids = new Set(
@@ -43,7 +47,6 @@ const Blogs: React.FC = () => {
 
           setBookmarkedIds(ids);
         }
-
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
@@ -55,7 +58,6 @@ const Blogs: React.FC = () => {
   }, [user]);
 
   const handleBookmark = async (blogId: string) => {
-
     if (!user) {
       navigate("/login");
       return;
@@ -64,49 +66,42 @@ const Blogs: React.FC = () => {
     const isBookmarked = bookmarkedIds.has(blogId);
 
     try {
-
       if (isBookmarked) {
-
         await fetch(`${API_URL}/api/bookmark`, {
           method: "DELETE",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             userId: user.uid,
             contentType: "blog",
-            contentId: blogId
-          })
+            contentId: blogId,
+          }),
         });
 
         const updated = new Set(bookmarkedIds);
         updated.delete(blogId);
         setBookmarkedIds(updated);
-
       } else {
-
         const res = await fetch(`${API_URL}/api/bookmark`, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             userId: user.uid,
             contentType: "blog",
-            contentId: blogId
-          })
+            contentId: blogId,
+          }),
         });
 
         if (res.ok) {
           setBookmarkedIds(new Set([...bookmarkedIds, blogId]));
         }
-
       }
-
     } catch (err) {
       console.error("Bookmark error:", err);
     }
-
   };
 
   if (loading) {
@@ -119,20 +114,18 @@ const Blogs: React.FC = () => {
 
   return (
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
-
       <header className="mb-12">
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-4">
           Insights & Perspectives
         </h1>
         <p className="text-stone-600 text-lg max-w-2xl">
-          Explore our collection of articles on productivity, mindset, and personal growth.
+          Explore our collection of articles on productivity, mindset, and
+          personal growth.
         </p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
         {blogs.map((blog) => (
-
           <motion.article
             key={blog._id}
             initial={{ opacity: 0, y: 20 }}
@@ -140,9 +133,7 @@ const Blogs: React.FC = () => {
             viewport={{ once: true }}
             className="group bg-white rounded-2xl overflow-hidden border border-stone-200 hover:shadow-xl transition-all duration-300"
           >
-
             <div className="aspect-video overflow-hidden relative group">
-
               <img
                 src={blog.coverImage}
                 alt={blog.title}
@@ -164,11 +155,9 @@ const Blogs: React.FC = () => {
                   <Bookmark className="w-4 h-4" />
                 )}
               </button>
-
             </div>
 
             <Link to={`/blog/${blog.slug}`} className="p-6 block">
-
               <div className="flex flex-wrap gap-2 mb-4">
                 {blog.tags.map((tag) => (
                   <span
@@ -190,7 +179,6 @@ const Blogs: React.FC = () => {
               </p>
 
               <div className="flex items-center justify-between pt-4 border-t border-stone-100">
-
                 <span className="text-xs text-stone-400">
                   {new Date(blog.createdAt).toLocaleDateString()}
                 </span>
@@ -198,17 +186,11 @@ const Blogs: React.FC = () => {
                 <span className="text-sm font-semibold text-stone-900 flex items-center gap-1 group-hover:gap-2 transition-all">
                   Read More <ArrowRight className="w-4 h-4" />
                 </span>
-
               </div>
-
             </Link>
-
           </motion.article>
-
         ))}
-
       </div>
-
     </div>
   );
 };
