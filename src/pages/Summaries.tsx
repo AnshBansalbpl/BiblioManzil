@@ -14,10 +14,10 @@ interface Summary {
   summary: string;
   keyLessons: string[];
   quotes: string[];
-  slug?: string;
 }
 
 const Summaries: React.FC = () => {
+
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -26,7 +26,9 @@ const Summaries: React.FC = () => {
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+
     const fetchData = async () => {
+
       try {
 
         const summariesRes = await fetch(`${API_URL}/api/summaries`);
@@ -34,6 +36,7 @@ const Summaries: React.FC = () => {
         setSummaries(summariesData);
 
         if (user) {
+
           const bookmarksRes = await fetch(`${API_URL}/api/bookmarks/${user.uid}`);
           const bookmarksData = await bookmarksRes.json();
 
@@ -44,23 +47,32 @@ const Summaries: React.FC = () => {
           );
 
           setBookmarkedIds(ids);
+
         }
 
       } catch (err) {
+
         console.error("Error fetching data:", err);
+
       } finally {
+
         setLoading(false);
+
       }
+
     };
 
     fetchData();
+
   }, [user]);
 
   const handleBookmark = async (summaryId: string) => {
 
     if (!user) {
+
       navigate("/login");
       return;
+
     }
 
     if (bookmarkedIds.has(summaryId)) return;
@@ -80,26 +92,35 @@ const Summaries: React.FC = () => {
       });
 
       if (res.ok) {
+
         setBookmarkedIds(new Set([...bookmarkedIds, summaryId]));
+
       }
 
     } catch (err) {
+
       console.error("Error bookmarking:", err);
+
     }
+
   };
 
   if (loading) {
+
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-stone-400" />
       </div>
     );
+
   }
 
   return (
+
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
 
       <header className="mb-12">
+
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-4">
           Book Summaries
         </h1>
@@ -107,6 +128,7 @@ const Summaries: React.FC = () => {
         <p className="text-stone-600 text-lg max-w-2xl">
           Get the core wisdom from best-selling non-fiction books in just a few minutes of reading.
         </p>
+
       </header>
 
       <div className="space-y-12">
@@ -151,7 +173,7 @@ const Summaries: React.FC = () => {
 
                 <div className="mb-8">
 
-                  <Link to={`/summary/${item.slug || item._id}`} className="block group/title">
+                  <Link to={`/summary/${item._id}`} className="block group/title">
 
                     <h2 className="text-3xl font-serif font-bold text-stone-900 mb-2 group-hover/title:text-stone-600 transition-colors">
                       {item.bookTitle}
@@ -181,7 +203,7 @@ const Summaries: React.FC = () => {
                 <div className="flex justify-end">
 
                   <Link
-                    to={`/summary/${item.slug || item._id}`}
+                    to={`/summary/${item._id}`}
                     className="text-stone-900 font-bold flex items-center gap-2 hover:gap-3 transition-all"
                   >
                     Read Full Summary
@@ -215,7 +237,9 @@ const Summaries: React.FC = () => {
       )}
 
     </div>
+
   );
+
 };
 
 export default Summaries;
