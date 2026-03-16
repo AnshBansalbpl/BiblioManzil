@@ -18,8 +18,10 @@ const SearchBar: React.FC = () => {
     books: SearchResult[];
     summaries: SearchResult[];
   }>({ blogs: [], books: [], summaries: [] });
+
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -29,6 +31,7 @@ const SearchBar: React.FC = () => {
         setIsOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -36,6 +39,7 @@ const SearchBar: React.FC = () => {
   useEffect(() => {
     if (query.length < 2) {
       setResults({ blogs: [], books: [], summaries: [] });
+      setIsOpen(false);
       return;
     }
 
@@ -44,8 +48,9 @@ const SearchBar: React.FC = () => {
 
       try {
         const res = await fetch(
-  `${import.meta.env.VITE_API_URL}/api/search?q=${encodeURIComponent(query)}`
-);
+          `${import.meta.env.VITE_API_URL}/api/search?q=${encodeURIComponent(query)}`
+        );
+
         const data = await res.json();
 
         const blogs = data.blogs.map((b: any) => ({
@@ -70,7 +75,6 @@ const SearchBar: React.FC = () => {
           title: s.bookTitle,
           author: s.author,
           coverImage: s.coverImage,
-          slug: s.slug,
         }));
 
         setResults({
@@ -96,7 +100,7 @@ const SearchBar: React.FC = () => {
 
     if (result.type === "blog") navigate(`/blog/${result.slug}`);
     if (result.type === "book") navigate(`/book/${result._id}`);
-    if (result.type === "summary") navigate(`/summary/${result.slug}`);
+    if (result.type === "summary") navigate(`/summary/${result._id}`);
   };
 
   const hasResults =
@@ -133,9 +137,7 @@ const SearchBar: React.FC = () => {
           {loading ? (
             <div className="p-8 text-center">
               <Loader2 className="w-6 h-6 animate-spin text-stone-400 mx-auto mb-2" />
-              <p className="text-xs text-stone-500">
-                Searching BiblioManzil...
-              </p>
+              <p className="text-xs text-stone-500">Searching BiblioManzil...</p>
             </div>
           ) : hasResults ? (
             <div className="p-2">
@@ -224,13 +226,13 @@ const SearchBar: React.FC = () => {
                 </div>
               )}
             </div>
-          ) : (
+          ) : !loading && query.length >= 2 ? (
             <div className="p-8 text-center">
               <p className="text-sm text-stone-500">
                 No results found for "{query}"
               </p>
             </div>
-          )}
+          ) : null}
         </div>
       )}
     </div>
