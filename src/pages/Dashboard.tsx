@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "motion/react";
-import { Loader2, Bookmark, Trash2, Book, FileText, BookOpen, Download } from "lucide-react";
+import { Loader2, Bookmark, Book, FileText, BookOpen, Download } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL || "https://bibliomanzil.onrender.com";
 
@@ -22,6 +23,7 @@ interface Summary {
 interface Blog {
   _id: string;
   title: string;
+  slug: string;
   coverImage: string;
 }
 
@@ -141,7 +143,11 @@ const Dashboard: React.FC = () => {
 
               {savedBlogs.map(blog => (
 
-                <div key={blog._id} className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+                <Link
+                  key={blog._id}
+                  to={`/blog/${blog.slug}`}
+                  className="bg-white rounded-2xl border border-stone-200 overflow-hidden hover:shadow-lg transition-shadow"
+                >
 
                   <div className="aspect-video overflow-hidden">
 
@@ -161,7 +167,7 @@ const Dashboard: React.FC = () => {
 
                   </div>
 
-                </div>
+                </Link>
 
               ))}
 
@@ -191,7 +197,11 @@ const Dashboard: React.FC = () => {
 
               {savedBooks.map(book => (
 
-                <div key={book._id} className="bg-white rounded-2xl border border-stone-200 overflow-hidden flex flex-col">
+                <Link
+                  key={book._id}
+                  to={`/book/${book._id}`}
+                  className="bg-white rounded-2xl border border-stone-200 overflow-hidden flex flex-col hover:shadow-lg transition-shadow"
+                >
 
                   <div className="aspect-[3/4] overflow-hidden">
 
@@ -213,18 +223,9 @@ const Dashboard: React.FC = () => {
                       by {book.author}
                     </p>
 
-                    <a
-                      href={book.pdfUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full bg-stone-100 text-stone-700 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 hover:bg-stone-200"
-                    >
-                      <Download className="w-3 h-3" /> Download
-                    </a>
-
                   </div>
 
-                </div>
+                </Link>
 
               ))}
 
@@ -254,7 +255,11 @@ const Dashboard: React.FC = () => {
 
               {savedSummaries.map(summary => (
 
-                <div key={summary._id} className="bg-white p-6 rounded-2xl border border-stone-200 flex items-center gap-4">
+                <Link
+                  key={summary._id}
+                  to={`/summary/${summary._id}`}
+                  className="bg-white p-6 rounded-2xl border border-stone-200 flex items-center gap-4 hover:shadow-md transition-shadow"
+                >
 
                   <div className="w-12 h-16 overflow-hidden rounded">
 
@@ -277,7 +282,7 @@ const Dashboard: React.FC = () => {
 
                   </div>
 
-                </div>
+                </Link>
 
               ))}
 
@@ -308,6 +313,7 @@ const Dashboard: React.FC = () => {
         )}
 
     </div>
+
   );
 
 };
