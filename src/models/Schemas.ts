@@ -51,7 +51,7 @@ export interface IReel extends Document {
 export interface IBookmark extends Document {
   userId: string;
   contentType: "blog" | "summary" | "book";
-  contentId: mongoose.Types.ObjectId;
+  contentId: string; // ✅ FIXED
   createdAt: Date;
 }
 
@@ -103,14 +103,22 @@ const ReelSchema = new Schema<IReel>({
   createdAt: { type: Date, default: Date.now },
 });
 
+/* =========================
+   FIXED BOOKMARK SCHEMA
+========================= */
+
 const BookmarkSchema = new Schema<IBookmark>({
   userId: { type: String, required: true },
+
   contentType: {
     type: String,
     enum: ["blog", "summary", "book"],
     required: true,
   },
-  contentId: { type: Schema.Types.ObjectId, required: true },
+
+  // ✅ changed from ObjectId → String
+  contentId: { type: String, required: true },
+
   createdAt: { type: Date, default: Date.now },
 });
 
