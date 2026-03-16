@@ -19,18 +19,23 @@ interface Book {
 const Library: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+
     const fetchData = async () => {
+
       try {
+
         const booksRes = await fetch(`${API_URL}/api/books`);
         const booksData = await booksRes.json();
         setBooks(booksData);
 
         if (user) {
+
           const bookmarksRes = await fetch(`${API_URL}/api/bookmarks/${user.uid}`);
           const bookmarksData = await bookmarksRes.json();
 
@@ -41,44 +46,80 @@ const Library: React.FC = () => {
           );
 
           setBookmarkedIds(ids);
+
         }
+
       } catch (err) {
+
         console.error("Error fetching data:", err);
+
       } finally {
+
         setLoading(false);
+
       }
+
     };
 
     fetchData();
+
   }, [user]);
 
   const handleBookmark = async (bookId: string) => {
+
     if (!user) {
       navigate("/login");
       return;
     }
 
-    if (bookmarkedIds.has(bookId)) return;
+    const isBookmarked = bookmarkedIds.has(bookId);
 
     try {
-      const res = await fetch(`${API_URL}/api/bookmark`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user.uid,
-          contentType: "book",
-          contentId: bookId,
-        }),
-      });
 
-      if (res.ok) {
-        setBookmarkedIds(new Set([...bookmarkedIds, bookId]));
+      if (isBookmarked) {
+
+        await fetch(`${API_URL}/api/bookmark`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: user.uid,
+            contentType: "book",
+            contentId: bookId
+          })
+        });
+
+        const updated = new Set(bookmarkedIds);
+        updated.delete(bookId);
+        setBookmarkedIds(updated);
+
+      } else {
+
+        const res = await fetch(`${API_URL}/api/bookmark`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: user.uid,
+            contentType: "book",
+            contentId: bookId
+          })
+        });
+
+        if (res.ok) {
+          setBookmarkedIds(new Set([...bookmarkedIds, bookId]));
+        }
+
       }
+
     } catch (err) {
-      console.error("Error bookmarking:", err);
+
+      console.error("Bookmark error:", err);
+
     }
+
   };
 
   if (loading) {
@@ -93,12 +134,15 @@ const Library: React.FC = () => {
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
 
       <header className="mb-12">
+
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-4">
           Digital Library
         </h1>
+
         <p className="text-stone-600 text-lg max-w-2xl">
           Download free e-books curated to help you master your mindset and achieve your goals.
         </p>
+
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -134,9 +178,11 @@ const Library: React.FC = () => {
                     : "bg-white/80 text-stone-600 hover:bg-white hover:text-stone-900"
                 }`}
               >
-                {bookmarkedIds.has(book._id)
-                  ? <Check className="w-4 h-4" />
-                  : <Bookmark className="w-4 h-4" />}
+                {bookmarkedIds.has(book._id) ? (
+                  <Check className="w-4 h-4 text-white" />
+                ) : (
+                  <Bookmark className="w-4 h-4" />
+                )}
               </button>
 
             </div>
