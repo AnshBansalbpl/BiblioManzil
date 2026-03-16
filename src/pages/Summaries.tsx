@@ -69,37 +69,55 @@ const Summaries: React.FC = () => {
   const handleBookmark = async (summaryId: string) => {
 
     if (!user) {
-
       navigate("/login");
       return;
-
     }
 
-    if (bookmarkedIds.has(summaryId)) return;
+    const isBookmarked = bookmarkedIds.has(summaryId);
 
     try {
 
-      const res = await fetch(`${API_URL}/api/bookmark`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          userId: user.uid,
-          contentType: "summary",
-          contentId: summaryId
-        })
-      });
+      if (isBookmarked) {
 
-      if (res.ok) {
+        await fetch(`${API_URL}/api/bookmark`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: user.uid,
+            contentType: "summary",
+            contentId: summaryId
+          })
+        });
 
-        setBookmarkedIds(new Set([...bookmarkedIds, summaryId]));
+        const updated = new Set(bookmarkedIds);
+        updated.delete(summaryId);
+        setBookmarkedIds(updated);
+
+      } else {
+
+        const res = await fetch(`${API_URL}/api/bookmark`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: user.uid,
+            contentType: "summary",
+            contentId: summaryId
+          })
+        });
+
+        if (res.ok) {
+          setBookmarkedIds(new Set([...bookmarkedIds, summaryId]));
+        }
 
       }
 
     } catch (err) {
 
-      console.error("Error bookmarking:", err);
+      console.error("Bookmark error:", err);
 
     }
 
