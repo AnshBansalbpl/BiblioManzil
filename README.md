@@ -74,8 +74,6 @@ Admins can manage platform content by:
 ## Admin Dashboard
 ![Admin](screenshots/admin.png)
 
-*(Create a `screenshots` folder in the repository and place the images inside it.)*
-
 ---
 
 # 🏗 System Architecture
