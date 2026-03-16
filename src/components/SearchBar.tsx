@@ -36,12 +36,14 @@ const SearchBar: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    if (query.length < 2) {
-      setResults({ blogs: [], books: [], summaries: [] });
-      setIsOpen(false);
-      return;
-    }
+  const MIN_SEARCH_LENGTH = 3;
+
+useEffect(() => {
+  if (query.trim().length < MIN_SEARCH_LENGTH) {
+    setResults({ blogs: [], books: [], summaries: [] });
+    setIsOpen(false);
+    return;
+  }
 
     const delayDebounceFn = setTimeout(async () => {
       setLoading(true);
