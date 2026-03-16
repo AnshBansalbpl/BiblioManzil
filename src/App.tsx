@@ -90,7 +90,7 @@ export default function App() {
               <Route path="/blogs" element={<Blogs />} />
               <Route path="/blog/:slug" element={<BlogDetail />} />
               <Route path="/summaries" element={<Summaries />} />
-              <Route path="/summary/:slug" element={<SummaryDetail />} />
+              <Route path="/summary/:id" element={<SummaryDetail />} />
               <Route path="/ebooks" element={<Library />} />
               <Route path="/book/:id" element={<BookDetail />} />
               <Route path="/reels" element={<Reels />} />
