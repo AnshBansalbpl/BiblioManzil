@@ -19,6 +19,7 @@ interface Blog {
 const Blogs: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
@@ -42,6 +43,7 @@ const Blogs: React.FC = () => {
 
           setBookmarkedIds(ids);
         }
+
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
@@ -53,32 +55,58 @@ const Blogs: React.FC = () => {
   }, [user]);
 
   const handleBookmark = async (blogId: string) => {
+
     if (!user) {
       navigate("/login");
       return;
     }
 
-    if (bookmarkedIds.has(blogId)) return;
+    const isBookmarked = bookmarkedIds.has(blogId);
 
     try {
-      const res = await fetch(`${API_URL}/api/bookmark`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user.uid,
-          contentType: "blog",
-          contentId: blogId,
-        }),
-      });
 
-      if (res.ok) {
-        setBookmarkedIds(new Set([...bookmarkedIds, blogId]));
+      if (isBookmarked) {
+
+        await fetch(`${API_URL}/api/bookmark`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: user.uid,
+            contentType: "blog",
+            contentId: blogId
+          })
+        });
+
+        const updated = new Set(bookmarkedIds);
+        updated.delete(blogId);
+        setBookmarkedIds(updated);
+
+      } else {
+
+        const res = await fetch(`${API_URL}/api/bookmark`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: user.uid,
+            contentType: "blog",
+            contentId: blogId
+          })
+        });
+
+        if (res.ok) {
+          setBookmarkedIds(new Set([...bookmarkedIds, blogId]));
+        }
+
       }
+
     } catch (err) {
-      console.error("Error bookmarking:", err);
+      console.error("Bookmark error:", err);
     }
+
   };
 
   if (loading) {
@@ -91,6 +119,7 @@ const Blogs: React.FC = () => {
 
   return (
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
+
       <header className="mb-12">
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-4">
           Insights & Perspectives
@@ -101,7 +130,9 @@ const Blogs: React.FC = () => {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
         {blogs.map((blog) => (
+
           <motion.article
             key={blog._id}
             initial={{ opacity: 0, y: 20 }}
@@ -128,7 +159,7 @@ const Blogs: React.FC = () => {
                 }`}
               >
                 {bookmarkedIds.has(blog._id) ? (
-                  <Check className="w-4 h-4" />
+                  <Check className="w-4 h-4 text-white" />
                 ) : (
                   <Bookmark className="w-4 h-4" />
                 )}
@@ -173,8 +204,11 @@ const Blogs: React.FC = () => {
             </Link>
 
           </motion.article>
+
         ))}
+
       </div>
+
     </div>
   );
 };
