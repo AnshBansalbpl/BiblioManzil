@@ -9,7 +9,6 @@ interface Summary {
   _id: string;
   bookTitle: string;
   author: string;
-  slug: string;
   coverImage: string;
   summary: string;
   keyLessons: string[];
@@ -17,41 +16,58 @@ interface Summary {
 }
 
 const SummaryDetail: React.FC = () => {
-  const { slug } = useParams<{ slug: string }>();
+
+  const { id } = useParams<{ id: string }>();
+
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
     const fetchSummary = async () => {
+
       try {
-        const res = await fetch(`${API_URL}/api/summary/${slug}`);
+
+        const res = await fetch(`${API_URL}/api/summary/${id}`);
 
         if (res.ok) {
+
           const data = await res.json();
           setSummary(data);
+
         }
 
       } catch (err) {
+
         console.error("Error fetching summary:", err);
+
       } finally {
+
         setLoading(false);
+
       }
+
     };
 
     fetchSummary();
-  }, [slug]);
+
+  }, [id]);
 
   if (loading) {
+
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-stone-400" />
       </div>
     );
+
   }
 
   if (!summary) {
+
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6">
+
         <h1 className="text-2xl font-bold text-stone-900 mb-4">
           Summary not found
         </h1>
@@ -63,11 +79,14 @@ const SummaryDetail: React.FC = () => {
           <ArrowLeft className="w-4 h-4" />
           Back to Summaries
         </Link>
+
       </div>
     );
+
   }
 
   return (
+
     <div className="pt-32 pb-20 px-6 max-w-5xl mx-auto">
 
       <motion.div
@@ -212,7 +231,9 @@ const SummaryDetail: React.FC = () => {
       </motion.div>
 
     </div>
+
   );
+
 };
 
 export default SummaryDetail;
