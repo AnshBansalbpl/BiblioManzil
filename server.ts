@@ -9,6 +9,7 @@ import summaryRoutes from "./src/routes/summaryRoutes.js";
 import reelRoutes from "./src/routes/reelRoutes.js";
 import bookmarkRoutes from "./src/routes/bookmarkRoutes.js";
 import searchRoutes from "./src/routes/searchRoutes.js";
+import sitemapRoutes from "./src/routes/sitemapRoutes.js";
 
 dotenv.config();
 
@@ -93,6 +94,8 @@ async function startServer() {
   app.use("/api/bookmarks", bookmarkRoutes);
 
   app.use("/api/search", searchRoutes);
+
+  app.use("/", sitemapRoutes);
 
   /* =============================
      Global Error Handler

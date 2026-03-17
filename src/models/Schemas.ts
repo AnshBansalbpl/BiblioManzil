@@ -19,6 +19,7 @@ export interface IBlog extends Document {
   coverImage: string;
   tags: string[];
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IBook extends Document {
@@ -30,6 +31,7 @@ export interface IBook extends Document {
   pdfUrl: string;
   downloads: number;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ISummary extends Document {
@@ -40,6 +42,7 @@ export interface ISummary extends Document {
   keyLessons: string[];
   quotes: string[];
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IReel extends Document {
@@ -67,14 +70,16 @@ const UserSchema = new Schema<IUser>({
   createdAt: { type: Date, default: Date.now },
 });
 
-const BlogSchema = new Schema<IBlog>({
-  title: { type: String, required: true },
-  slug: { type: String, required: true, unique: true },
-  content: { type: String, required: true },
-  coverImage: { type: String, required: true },
-  tags: [{ type: String }],
-  createdAt: { type: Date, default: Date.now },
-});
+const BlogSchema = new Schema<IBlog>(
+  {
+    title: { type: String, required: true },
+    slug: { type: String, required: true, unique: true },
+    content: { type: String, required: true },
+    coverImage: { type: String, required: true },
+    tags: [{ type: String }],
+  },
+  { timestamps: true }
+);
 
 /* ===== SEARCH INDEX ===== */
 BlogSchema.index({
@@ -83,16 +88,18 @@ BlogSchema.index({
   tags: "text",
 });
 
-const BookSchema = new Schema<IBook>({
-  title: { type: String, required: true },
-  author: { type: String, required: true },
-  description: { type: String, required: true },
-  category: { type: String, required: true },
-  coverImage: { type: String, required: true },
-  pdfUrl: { type: String, required: true },
-  downloads: { type: Number, default: 0 },
-  createdAt: { type: Date, default: Date.now },
-});
+const BookSchema = new Schema<IBook>(
+  {
+    title: { type: String, required: true },
+    author: { type: String, required: true },
+    description: { type: String, required: true },
+    category: { type: String, required: true },
+    coverImage: { type: String, required: true },
+    pdfUrl: { type: String, required: true },
+    downloads: { type: Number, default: 0 },
+  },
+  { timestamps: true }
+);
 
 /* ===== SEARCH INDEX ===== */
 BookSchema.index({
@@ -101,15 +108,17 @@ BookSchema.index({
   description: "text",
 });
 
-const SummarySchema = new Schema<ISummary>({
-  bookTitle: { type: String, required: true },
-  author: { type: String, required: true },
-  coverImage: { type: String, required: true },
-  summary: { type: String, required: true },
-  keyLessons: [{ type: String }],
-  quotes: [{ type: String }],
-  createdAt: { type: Date, default: Date.now },
-});
+const SummarySchema = new Schema<ISummary>(
+  {
+    bookTitle: { type: String, required: true },
+    author: { type: String, required: true },
+    coverImage: { type: String, required: true },
+    summary: { type: String, required: true },
+    keyLessons: [{ type: String }],
+    quotes: [{ type: String }],
+  },
+  { timestamps: true }
+);
 
 /* ===== SEARCH INDEX ===== */
 SummarySchema.index({
