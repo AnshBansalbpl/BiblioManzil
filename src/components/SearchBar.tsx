@@ -27,8 +27,29 @@ const SearchBar: React.FC = () => {
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // 🔥 CACHE (important)
   const cacheRef = useRef<Record<string, any>>({});
+
+  /* =========================
+     HIGHLIGHT FUNCTION
+  ========================= */
+  const highlightText = (text: string, query: string) => {
+    if (!query) return text;
+
+    const parts = text.split(new RegExp(`(${query})`, "gi"));
+
+    return parts.map((part, index) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <span
+          key={index}
+          className="bg-yellow-200 text-black px-1 rounded"
+        >
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
 
   /* =========================
      CLOSE ON OUTSIDE CLICK
@@ -60,7 +81,6 @@ const SearchBar: React.FC = () => {
     }
 
     const delayDebounceFn = setTimeout(async () => {
-      // 🔥 CHECK CACHE FIRST
       if (cacheRef.current[trimmedQuery]) {
         setResults(cacheRef.current[trimmedQuery]);
         setIsOpen(true);
@@ -100,7 +120,6 @@ const SearchBar: React.FC = () => {
           })),
         };
 
-        // 🔥 SAVE TO CACHE
         cacheRef.current[trimmedQuery] = formattedResults;
 
         setResults(formattedResults);
@@ -132,9 +151,6 @@ const SearchBar: React.FC = () => {
     results.books.length > 0 ||
     results.summaries.length > 0;
 
-  /* =========================
-     UI
-  ========================= */
   return (
     <div className="relative w-full max-w-md" ref={searchRef}>
       <div className="relative group">
@@ -163,17 +179,16 @@ const SearchBar: React.FC = () => {
 
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-stone-200 shadow-2xl overflow-hidden z-50 max-h-[80vh] overflow-y-auto">
-          
-          {/* LOADING */}
           {loading ? (
             <div className="p-8 text-center">
               <Loader2 className="w-6 h-6 animate-spin text-stone-400 mx-auto mb-2" />
-              <p className="text-xs text-stone-500">Searching BiblioManzil...</p>
+              <p className="text-xs text-stone-500">
+                Searching BiblioManzil...
+              </p>
             </div>
           ) : hasResults ? (
-            
             <div className="p-2">
-              
+
               {/* BLOGS */}
               {results.blogs.length > 0 && (
                 <div className="mb-4">
@@ -190,10 +205,9 @@ const SearchBar: React.FC = () => {
                       <img
                         src={b.coverImage}
                         className="w-10 h-10 rounded-lg object-cover"
-                        referrerPolicy="no-referrer"
                       />
                       <span className="text-sm font-medium text-stone-900 line-clamp-1">
-                        {b.title}
+                        {highlightText(b.title, query)}
                       </span>
                     </button>
                   ))}
@@ -213,14 +227,10 @@ const SearchBar: React.FC = () => {
                       onClick={() => handleSelect(b)}
                       className="w-full flex items-center gap-3 p-2 hover:bg-stone-50 rounded-xl text-left"
                     >
-                      <img
-                        src={b.coverImage}
-                        className="w-10 h-14 rounded-md object-cover"
-                        referrerPolicy="no-referrer"
-                      />
+                      <img src={b.coverImage} className="w-10 h-14 rounded-md object-cover" />
                       <div>
                         <p className="text-sm font-medium text-stone-900 line-clamp-1">
-                          {b.title}
+                          {highlightText(b.title, query)}
                         </p>
                         <p className="text-[10px] text-stone-500 italic">
                           by {b.author}
@@ -244,14 +254,10 @@ const SearchBar: React.FC = () => {
                       onClick={() => handleSelect(s)}
                       className="w-full flex items-center gap-3 p-2 hover:bg-stone-50 rounded-xl text-left"
                     >
-                      <img
-                        src={s.coverImage}
-                        className="w-10 h-14 rounded-md object-cover"
-                        referrerPolicy="no-referrer"
-                      />
+                      <img src={s.coverImage} className="w-10 h-14 rounded-md object-cover" />
                       <div>
                         <p className="text-sm font-medium text-stone-900 line-clamp-1">
-                          {s.title}
+                          {highlightText(s.title, query)}
                         </p>
                         <p className="text-[10px] text-stone-500 italic">
                           by {s.author}
@@ -261,6 +267,7 @@ const SearchBar: React.FC = () => {
                   ))}
                 </div>
               )}
+
             </div>
           ) : (
             <div className="p-8 text-center">
