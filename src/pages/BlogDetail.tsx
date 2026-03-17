@@ -68,12 +68,16 @@ const BlogDetail: React.FC = () => {
   }
 
   /* =========================
-     PARAGRAPH FIX
+     SMART PARAGRAPH HANDLING
   ========================= */
-  const paragraphs = blog.content
-    .split("\n\n") // split by paragraph
-    .map((p) => p.trim()) // clean whitespace
-    .filter((p) => p.length > 0); // remove empty
+
+  const paragraphs = blog.content.includes("\n\n")
+    ? blog.content.split(/\n{2,}/) // proper paragraphs
+    : blog.content.split("\n"); // fallback for old data
+
+  const cleanedParagraphs = paragraphs
+    .map((p) => p.trim())
+    .filter((p) => p.length > 0);
 
   return (
     <div className="pt-32 pb-20 px-6 max-w-4xl mx-auto">
@@ -145,7 +149,7 @@ const BlogDetail: React.FC = () => {
 
         {/* CONTENT */}
         <div className="prose prose-stone prose-lg max-w-none">
-          {paragraphs.map((paragraph, idx) => (
+          {cleanedParagraphs.map((paragraph, idx) => (
             <p key={idx} className="text-stone-700 leading-relaxed mb-6">
               {paragraph}
             </p>
