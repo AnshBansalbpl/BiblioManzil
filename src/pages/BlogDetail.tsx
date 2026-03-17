@@ -41,11 +41,6 @@ const BlogDetail: React.FC = () => {
     fetchBlog();
   }, [slug]);
 
-  // 🔹 Clean description for SEO (removes line breaks)
-  const description = blog
-    ? blog.content.replace(/\n/g, " ").slice(0, 150)
-    : "";
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -72,94 +67,92 @@ const BlogDetail: React.FC = () => {
     );
   }
 
+  /* =========================
+     PARAGRAPH FIX
+  ========================= */
+  const paragraphs = blog.content
+    .split("\n\n") // split by paragraph
+    .map((p) => p.trim()) // clean whitespace
+    .filter((p) => p.length > 0); // remove empty
+
   return (
-    <>
-      {/* 🔥 SEO META TAGS */}
+    <div className="pt-32 pb-20 px-6 max-w-4xl mx-auto">
+      {/* =========================
+         SEO
+      ========================= */}
       <Helmet>
         <title>{blog.title} | BiblioManzil</title>
+        <meta name="description" content={blog.content.slice(0, 150)} />
 
-        <meta name="description" content={description} />
-
-        {/* Open Graph (for social sharing) */}
         <meta property="og:title" content={blog.title} />
-        <meta property="og:description" content={description} />
+        <meta property="og:description" content={blog.content.slice(0, 150)} />
         <meta property="og:image" content={blog.coverImage} />
-        <meta
-          property="og:url"
-          content={`https://biblio-manzil.vercel.app/blog/${blog.slug}`}
-        />
-        <meta property="og:type" content="article" />
       </Helmet>
 
-      <div className="pt-32 pb-20 px-6 max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Link
+          to="/blogs"
+          className="inline-flex items-center gap-2 text-stone-500 hover:text-stone-900 mb-8 transition-colors"
         >
-          <Link
-            to="/blogs"
-            className="inline-flex items-center gap-2 text-stone-500 hover:text-stone-900 mb-8 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to all insights
-          </Link>
+          <ArrowLeft className="w-4 h-4" />
+          Back to all insights
+        </Link>
 
-          <header className="mb-12">
-            <div className="flex flex-wrap gap-2 mb-6">
-              {blog.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-stone-500 bg-stone-100 px-3 py-1 rounded-full"
-                >
-                  <Tag className="w-3 h-3" />
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            <h1 className="text-4xl md:text-6xl font-serif font-bold text-stone-900 mb-6 leading-tight">
-              {blog.title}
-            </h1>
-
-            <div className="flex items-center gap-4 text-stone-400 text-sm">
-              <span className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                {new Date(blog.createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+        <header className="mb-12">
+          {/* TAGS */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {blog.tags.map((tag, idx) => (
+              <span
+                key={idx}
+                className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-stone-500 bg-stone-100 px-3 py-1 rounded-full"
+              >
+                <Tag className="w-3 h-3" />
+                {tag}
               </span>
-            </div>
-          </header>
-
-          <div className="aspect-[21/9] rounded-3xl overflow-hidden mb-12 shadow-xl shadow-stone-200">
-            <img
-              src={blog.coverImage}
-              alt={blog.title}
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
+            ))}
           </div>
 
-          <div className="prose prose-stone prose-lg max-w-none">
-            {blog.content.split("\n").map((paragraph, idx) =>
-              paragraph.trim() ? (
-                <p
-                  key={idx}
-                  className="text-stone-700 leading-relaxed mb-6"
-                >
-                  {paragraph}
-                </p>
-              ) : (
-                <br key={idx} />
-              )
-            )}
+          {/* TITLE */}
+          <h1 className="text-4xl md:text-6xl font-serif font-bold text-stone-900 mb-6 leading-tight">
+            {blog.title}
+          </h1>
+
+          {/* DATE */}
+          <div className="flex items-center gap-4 text-stone-400 text-sm">
+            <span className="flex items-center gap-1">
+              <Calendar className="w-4 h-4" />
+              {new Date(blog.createdAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
           </div>
-        </motion.div>
-      </div>
-    </>
+        </header>
+
+        {/* COVER IMAGE */}
+        <div className="aspect-[21/9] rounded-3xl overflow-hidden mb-12 shadow-xl shadow-stone-200">
+          <img
+            src={blog.coverImage}
+            alt={blog.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* CONTENT */}
+        <div className="prose prose-stone prose-lg max-w-none">
+          {paragraphs.map((paragraph, idx) => (
+            <p key={idx} className="text-stone-700 leading-relaxed mb-6">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+      </motion.div>
+    </div>
   );
 };
 
