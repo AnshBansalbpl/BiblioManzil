@@ -71,13 +71,31 @@ const BlogDetail: React.FC = () => {
      SMART PARAGRAPH HANDLING
   ========================= */
 
-  const paragraphs = blog.content.includes("\n\n")
-    ? blog.content.split(/\n{2,}/) // proper paragraphs
-    : blog.content.split("\n"); // fallback for old data
+  const rawParagraphs = blog.content.includes("\n\n")
+    ? blog.content.split(/\n{2,}/)
+    : blog.content.split("\n");
 
-  const cleanedParagraphs = paragraphs
+  const paragraphs = rawParagraphs
     .map((p) => p.trim())
     .filter((p) => p.length > 0);
+
+  /* =========================
+     HELPER FUNCTIONS
+  ========================= */
+
+  const isShort = (text: string) => text.length < 80;
+
+  const isQuote = (text: string) =>
+    text.startsWith("“") ||
+    text.startsWith('"') ||
+    text.endsWith("”") ||
+    text.endsWith('"');
+
+  const getSpacing = (text: string) => {
+    if (isQuote(text)) return "mb-3 italic text-stone-600";
+    if (isShort(text)) return "mb-3";
+    return "mb-6";
+  };
 
   return (
     <div className="pt-32 pb-20 px-6 max-w-4xl mx-auto">
@@ -86,10 +104,16 @@ const BlogDetail: React.FC = () => {
       ========================= */}
       <Helmet>
         <title>{blog.title} | BiblioManzil</title>
-        <meta name="description" content={blog.content.slice(0, 150)} />
+        <meta
+          name="description"
+          content={blog.content.replace(/\n/g, " ").slice(0, 160)}
+        />
 
         <meta property="og:title" content={blog.title} />
-        <meta property="og:description" content={blog.content.slice(0, 150)} />
+        <meta
+          property="og:description"
+          content={blog.content.replace(/\n/g, " ").slice(0, 160)}
+        />
         <meta property="og:image" content={blog.coverImage} />
       </Helmet>
 
@@ -98,6 +122,7 @@ const BlogDetail: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        {/* BACK */}
         <Link
           to="/blogs"
           className="inline-flex items-center gap-2 text-stone-500 hover:text-stone-900 mb-8 transition-colors"
@@ -106,6 +131,7 @@ const BlogDetail: React.FC = () => {
           Back to all insights
         </Link>
 
+        {/* HEADER */}
         <header className="mb-12">
           {/* TAGS */}
           <div className="flex flex-wrap gap-2 mb-6">
@@ -149,8 +175,13 @@ const BlogDetail: React.FC = () => {
 
         {/* CONTENT */}
         <div className="prose prose-stone prose-lg max-w-none">
-          {cleanedParagraphs.map((paragraph, idx) => (
-            <p key={idx} className="text-stone-700 leading-relaxed mb-6">
+          {paragraphs.map((paragraph, idx) => (
+            <p
+              key={idx}
+              className={`text-stone-700 leading-relaxed ${getSpacing(
+                paragraph
+              )}`}
+            >
               {paragraph}
             </p>
           ))}
