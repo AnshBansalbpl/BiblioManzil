@@ -2,7 +2,11 @@
   "rewrites": [
     {
       "source": "/sitemap.xml",
-      "destination": "https://YOUR-BACKEND-URL.onrender.com/sitemap.xml"
+      "destination": "https://bibliomanzil.onrender.com/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/robots.txt"
     },
     {
       "source": "/(.*)",
