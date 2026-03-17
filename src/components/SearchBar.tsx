@@ -11,13 +11,15 @@ interface SearchResult {
   slug?: string;
 }
 
+const MIN_SEARCH_LENGTH = 3;
+
 const SearchBar: React.FC = () => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<{
-    blogs: SearchResult[];
-    books: SearchResult[];
-    summaries: SearchResult[];
-  }>({ blogs: [], books: [], summaries: [] });
+  const [results, setResults] = useState({
+    blogs: [] as SearchResult[],
+    books: [] as SearchResult[],
+    summaries: [] as SearchResult[],
+  });
 
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -25,9 +27,18 @@ const SearchBar: React.FC = () => {
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
 
+  // 🔥 CACHE (important)
+  const cacheRef = useRef<Record<string, any>>({});
+
+  /* =========================
+     CLOSE ON OUTSIDE CLICK
+  ========================= */
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -36,55 +47,63 @@ const SearchBar: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const MIN_SEARCH_LENGTH = 3;
+  /* =========================
+     SEARCH EFFECT
+  ========================= */
+  useEffect(() => {
+    const trimmedQuery = query.trim();
 
-useEffect(() => {
-  if (query.trim().length < MIN_SEARCH_LENGTH) {
-    setResults({ blogs: [], books: [], summaries: [] });
-    setIsOpen(false);
-    return;
-  }
+    if (trimmedQuery.length < MIN_SEARCH_LENGTH) {
+      setResults({ blogs: [], books: [], summaries: [] });
+      setIsOpen(false);
+      return;
+    }
 
     const delayDebounceFn = setTimeout(async () => {
+      // 🔥 CHECK CACHE FIRST
+      if (cacheRef.current[trimmedQuery]) {
+        setResults(cacheRef.current[trimmedQuery]);
+        setIsOpen(true);
+        return;
+      }
+
       setLoading(true);
 
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/search?q=${encodeURIComponent(query)}`
+          `${import.meta.env.VITE_API_URL}/api/search?q=${encodeURIComponent(trimmedQuery)}`
         );
 
         const data = await res.json();
 
-        const blogs = data.blogs.map((b: any) => ({
-          _id: b._id,
-          type: "blog",
-          title: b.title,
-          coverImage: b.coverImage,
-          slug: b.slug,
-        }));
+        const formattedResults = {
+          blogs: data.blogs.map((b: any) => ({
+            _id: b._id,
+            type: "blog",
+            title: b.title,
+            coverImage: b.coverImage,
+            slug: b.slug,
+          })),
+          books: data.books.map((b: any) => ({
+            _id: b._id,
+            type: "book",
+            title: b.title,
+            author: b.author,
+            coverImage: b.coverImage,
+          })),
+          summaries: data.summaries.map((s: any) => ({
+            _id: s._id,
+            type: "summary",
+            title: s.bookTitle,
+            author: s.author,
+            coverImage: s.coverImage,
+          })),
+        };
 
-        const books = data.books.map((b: any) => ({
-          _id: b._id,
-          type: "book",
-          title: b.title,
-          author: b.author,
-          coverImage: b.coverImage,
-        }));
+        // 🔥 SAVE TO CACHE
+        cacheRef.current[trimmedQuery] = formattedResults;
 
-        const summaries = data.summaries.map((s: any) => ({
-          _id: s._id,
-          type: "summary",
-          title: s.bookTitle,
-          author: s.author,
-          coverImage: s.coverImage,
-        }));
-
-        setResults({
-          blogs,
-          books,
-          summaries,
-        });
-
+        setResults(formattedResults);
         setIsOpen(true);
       } catch (err) {
         console.error("Search error:", err);
@@ -96,6 +115,9 @@ useEffect(() => {
     return () => clearTimeout(delayDebounceFn);
   }, [query]);
 
+  /* =========================
+     SELECT HANDLER
+  ========================= */
   const handleSelect = (result: SearchResult) => {
     setQuery("");
     setIsOpen(false);
@@ -110,6 +132,9 @@ useEffect(() => {
     results.books.length > 0 ||
     results.summaries.length > 0;
 
+  /* =========================
+     UI
+  ========================= */
   return (
     <div className="relative w-full max-w-md" ref={searchRef}>
       <div className="relative group">
@@ -119,7 +144,9 @@ useEffect(() => {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => query.length >= 2 && setIsOpen(true)}
+          onFocus={() =>
+            query.trim().length >= MIN_SEARCH_LENGTH && setIsOpen(true)
+          }
           placeholder="Search blogs, books, summaries..."
           className="w-full bg-stone-100 border-none rounded-full py-2 pl-10 pr-10 text-sm focus:ring-2 focus:ring-stone-200 transition-all outline-none"
         />
@@ -136,13 +163,18 @@ useEffect(() => {
 
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-stone-200 shadow-2xl overflow-hidden z-50 max-h-[80vh] overflow-y-auto">
+          
+          {/* LOADING */}
           {loading ? (
             <div className="p-8 text-center">
               <Loader2 className="w-6 h-6 animate-spin text-stone-400 mx-auto mb-2" />
               <p className="text-xs text-stone-500">Searching BiblioManzil...</p>
             </div>
           ) : hasResults ? (
+            
             <div className="p-2">
+              
+              {/* BLOGS */}
               {results.blogs.length > 0 && (
                 <div className="mb-4">
                   <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-stone-400 flex items-center gap-2">
@@ -153,7 +185,7 @@ useEffect(() => {
                     <button
                       key={b._id}
                       onClick={() => handleSelect(b)}
-                      className="w-full flex items-center gap-3 p-2 hover:bg-stone-50 rounded-xl transition-colors text-left"
+                      className="w-full flex items-center gap-3 p-2 hover:bg-stone-50 rounded-xl text-left"
                     >
                       <img
                         src={b.coverImage}
@@ -168,6 +200,7 @@ useEffect(() => {
                 </div>
               )}
 
+              {/* BOOKS */}
               {results.books.length > 0 && (
                 <div className="mb-4">
                   <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-stone-400 flex items-center gap-2">
@@ -178,7 +211,7 @@ useEffect(() => {
                     <button
                       key={b._id}
                       onClick={() => handleSelect(b)}
-                      className="w-full flex items-center gap-3 p-2 hover:bg-stone-50 rounded-xl transition-colors text-left"
+                      className="w-full flex items-center gap-3 p-2 hover:bg-stone-50 rounded-xl text-left"
                     >
                       <img
                         src={b.coverImage}
@@ -198,6 +231,7 @@ useEffect(() => {
                 </div>
               )}
 
+              {/* SUMMARIES */}
               {results.summaries.length > 0 && (
                 <div className="mb-2">
                   <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-stone-400 flex items-center gap-2">
@@ -208,7 +242,7 @@ useEffect(() => {
                     <button
                       key={s._id}
                       onClick={() => handleSelect(s)}
-                      className="w-full flex items-center gap-3 p-2 hover:bg-stone-50 rounded-xl transition-colors text-left"
+                      className="w-full flex items-center gap-3 p-2 hover:bg-stone-50 rounded-xl text-left"
                     >
                       <img
                         src={s.coverImage}
@@ -228,13 +262,13 @@ useEffect(() => {
                 </div>
               )}
             </div>
-          ) : !loading && query.length >= 2 ? (
+          ) : (
             <div className="p-8 text-center">
               <p className="text-sm text-stone-500">
                 No results found for "{query}"
               </p>
             </div>
-          ) : null}
+          )}
         </div>
       )}
     </div>
