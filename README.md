@@ -1,19 +1,44 @@
 # 📚 BiblioManzil
 
-BiblioManzil is a full-stack web platform designed for readers and learners who enjoy motivational content, book insights, and curated reading resources.
+BiblioManzil is a full-stack reading and learning platform built for readers who enjoy motivational content, curated knowledge, and accessible learning resources.
 
-The platform allows users to explore blogs, read book summaries, download free ebooks, watch motivational reels, and bookmark their favorite content for later.
+The platform enables users to explore blogs, read structured book summaries, download free ebooks, watch motivational reels, and save content for later.
 
-It is built using a modern full-stack architecture with React, Node.js, MongoDB, and Firebase authentication.
+Built with a modern full-stack architecture using React, Express, MongoDB Atlas, Cloudinary, Firebase Authentication, and deployed using Vercel + Render.
+
+---
+
+# 🚀 Current Status
+
+Current Stable Release
+**v1.0.0 — Public Launch & SEO Foundation**
+
+Implemented:
+
+* Motivational blogs
+* Curated ebook library
+* Book summaries
+* Search functionality
+* Bookmark system
+* Admin dashboard
+* Sitemap integration
+* Structured Data (JSON-LD SEO)
+
+Planned:
+
+* Rich text blog editor
+* AI powered recommendations
+* Reading progress tracking
+* Advanced filtering
 
 ---
 
 # 🌐 Live Demo
 
-Frontend  
+Frontend
 https://biblio-manzil.vercel.app
 
-Backend API  
+Backend API
 https://bibliomanzil.onrender.com
 
 ---
@@ -21,120 +46,175 @@ https://bibliomanzil.onrender.com
 # ✨ Features
 
 ### 📚 E-Book Library
+
 Browse and download curated motivational and self-development books.
 
 ### 📝 Blogs
-Read motivational blogs related to productivity, mindset, and personal growth.
+
+Read motivational blogs related to:
+
+* Productivity
+* Mindset
+* Personal growth
+* Learning
 
 ### 📖 Book Summaries
+
 Quick and structured summaries of popular books including:
-- Key lessons
-- Core ideas
-- Memorable quotes
+
+* Key lessons
+* Core ideas
+* Memorable quotes
 
 ### 🎥 Motivation Reels
+
 Watch embedded motivational reels for quick inspiration.
 
 ### 🔖 Bookmark System
-Users can bookmark:
-- Blogs
-- Books
-- Summaries
 
-Saved items appear in the personal dashboard.
+Users can bookmark:
+
+* Blogs
+* Books
+* Summaries
+
+Saved items appear inside the personal dashboard.
 
 ### 👤 Authentication
+
 Secure user authentication using Firebase:
-- Email & Password login
-- Google Sign-In
+
+* Email & Password login
+* Google Sign-In
 
 ### 🛠 Admin Dashboard
-Admins can manage platform content by:
-- Uploading blogs
-- Adding ebooks
-- Publishing summaries
-- Embedding reels
+
+Admins can manage content by:
+
+* Uploading blogs
+* Adding ebooks
+* Publishing summaries
+* Embedding reels
+
+### 🔍 Search & Discoverability
+
+Implemented for better content exploration:
+
+* Unified search experience
+* Sitemap integration
+* Structured Data (WebSite / Article / Book)
+* SEO optimized metadata
 
 ---
 
 # 🖼 Screenshots
 
 ## Homepage
+
 ![Homepage](screenshots/homepage.png)
 
 ## Book Library
+
 ![Library](screenshots/library.png)
 
 ## Book Summary Page
+
 ![Summary](screenshots/summary.png)
 
 ## User Dashboard
+
 ![Dashboard](screenshots/dashboard.png)
 
 ## Admin Dashboard
+
 ![Admin](screenshots/admin.png)
 
 ---
 
 # 🏗 System Architecture
+
 Frontend (React + Vite)
+
 ↓
+
 Backend API (Node.js + Express)
+
 ↓
+
 Database (MongoDB Atlas)
+
 ↓
-File Storage (Cloudinary)
+
+Storage (Cloudinary)
+
 ↓
+
 Authentication (Firebase)
+
+↓
+
+Deployment (Vercel + Render)
 
 ---
 
 # 🧰 Tech Stack
 
 ## Frontend
-- React
-- Vite
-- React Router
-- TailwindCSS
+
+* React 19
+* Vite
+* TypeScript
+* React Router
+* Tailwind CSS
 
 ## Backend
-- Node.js
-- Express.js
-- REST API architecture
+
+* Node.js
+* Express.js
+* REST API Architecture
 
 ## Database
-- MongoDB Atlas
-- Mongoose
+
+* MongoDB Atlas
+* Mongoose
 
 ## Cloud Services
-- Firebase Authentication
-- Cloudinary (File Storage)
+
+* Firebase Authentication
+* Cloudinary (File Storage)
 
 ## Deployment
-- Vercel (Frontend Hosting)
-- Render (Backend Hosting)
+
+* Vercel (Frontend Hosting)
+* Render (Backend Hosting)
 
 ---
 
 # 📂 Project Structure
+
+```text
 bibliomanzil
 │
 ├── src
-│ ├── components
-│ ├── pages
-│ ├── context
-│ ├── models
-│ └── routes
+│   ├── components
+│   ├── pages
+│   ├── context
+│   ├── routes
 │
 ├── server.ts
 ├── package.json
+├── vite.config.ts
+├── tsconfig.json
 └── README.md
+```
 
 ---
 
 # ⚙️ Environment Variables
 
-Create a `.env` file in the project root with the following variables:
+Create a `.env` file in the project root:
+
+```env
 MONGODB_URI=
 
 CLOUDINARY_CLOUD_NAME=
@@ -149,42 +229,60 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=
 VITE_FIREBASE_APP_ID=
 
 VITE_API_URL=
+```
 
 ---
 
 # 🚀 Running the Project Locally
 
-### 1️⃣ Clone the repository
-git clone https://github.com/AnshBansalbpl/bibliomanzil.git
+### 1️⃣ Clone repository
 
-### 2️⃣ Navigate into the project
-cd bibliomanzil
+```bash
+git clone https://github.com/AnshBansalbpl/BiblioManzil.git
+```
+
+### 2️⃣ Navigate into project
+
+```bash
+cd BiblioManzil
+```
 
 ### 3️⃣ Install dependencies
+
+```bash
 npm install
+```
 
-### 4️⃣ Start the development server
+### 4️⃣ Start development server
+
+```bash
 npm run dev
+```
 
 ---
 
-# 📌 Future Improvements
+# 📦 Releases
 
-Some potential improvements planned for the platform:
+Stable project milestones are maintained using GitHub Releases.
 
-- AI powered book recommendations
-- Personalized reading suggestions
-- Reading progress tracking
-- Community book sharing system
-- Advanced search and filtering
+Latest Release:
+
+**v1.0.0 — Public Launch & SEO Foundation**
+
+Only the latest version is deployed publicly.
 
 ---
 
-# 🤝 Contributing
+# 📌 Roadmap
 
-Contributions, issues, and feature suggestions are welcome.
+Upcoming improvements:
 
-Feel free to open an issue or submit a pull request.
+* Rich text blog editor
+* Personalized recommendations
+* Reading progress tracking
+* Advanced search and filtering
+* Community reading features
+* Analytics and engagement insights
 
 ---
 
@@ -196,7 +294,7 @@ This project is open source and available under the MIT License.
 
 # 👨‍💻 Author
 
-Developed by Ansh Bansal
+Built and maintained by **Ansh Bansal**
 
-GitHub  
+GitHub
 https://github.com/AnshBansalbpl
