@@ -96,6 +96,44 @@ const BlogDetail: React.FC = () => {
     if (isShort(text)) return "mb-3";
     return "mb-6";
   };
+  const articleSchema = {
+  "@context": "https://schema.org",
+
+  "@type": "Article",
+
+  headline: blog.title,
+
+  image: [blog.coverImage],
+
+  datePublished: blog.createdAt,
+
+  dateModified: blog.createdAt,
+
+  author: {
+    "@type": "Organization",
+    name: "BiblioManzil",
+  },
+
+  publisher: {
+    "@type": "Organization",
+    name: "BiblioManzil",
+  },
+
+  description:
+    blog.content
+      .replace(/\n/g, " ")
+      .replace(/<[^>]*>/g, "")
+      .slice(0, 160),
+
+  keywords: blog.tags.join(","),
+
+  mainEntityOfPage: {
+    "@type": "WebPage",
+
+    "@id":
+      `https://biblio-manzil.vercel.app/blog/${blog.slug}`,
+  },
+};
 
   return (
     <div className="pt-32 pb-20 px-6 max-w-4xl mx-auto">
@@ -103,18 +141,55 @@ const BlogDetail: React.FC = () => {
          SEO
       ========================= */}
       <Helmet>
-        <title>{blog.title} | BiblioManzil</title>
+
+        <title>
+        {blog.title} | BiblioManzil
+        </title>
+
         <meta
-          name="description"
-          content={blog.content.replace(/\n/g, " ").slice(0, 160)}
+        name="description"
+        content={
+        blog.content
+        .replace(/\n/g, " ")
+        .replace(/<[^>]*>/g, "")
+        .slice(0, 160)
+        }
         />
 
-        <meta property="og:title" content={blog.title} />
         <meta
-          property="og:description"
-          content={blog.content.replace(/\n/g, " ").slice(0, 160)}
+        property="og:title"
+        content={blog.title}
         />
-        <meta property="og:image" content={blog.coverImage} />
+
+        <meta
+        property="og:description"
+        content={
+        blog.content
+        .replace(/\n/g, " ")
+        .replace(/<[^>]*>/g, "")
+        .slice(0, 160)
+        }
+        />
+
+        <meta
+        property="og:image"
+        content={blog.coverImage}
+        />
+
+        <meta
+        property="og:type"
+        content="article"
+        />
+
+        <meta
+        property="og:url"
+        content={`https://biblio-manzil.vercel.app/blog/${blog.slug}`}
+        />
+
+        <script type="application/ld+json">
+        {JSON.stringify(articleSchema)}
+        </script>
+
       </Helmet>
 
       <motion.div
