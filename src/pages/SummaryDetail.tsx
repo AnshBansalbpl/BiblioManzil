@@ -54,6 +54,32 @@ const SummaryDetail: React.FC = () => {
     ? summary.summary.replace(/\n/g, " ").slice(0, 150)
     : "";
 
+  const bookSchema = summary
+  ? {
+      "@context": "https://schema.org",
+
+      "@type": "Book",
+
+      name: summary.bookTitle,
+
+      author: {
+        "@type": "Person",
+        name: summary.author,
+      },
+
+      image: summary.coverImage,
+
+      description,
+
+      url: `https://biblio-manzil.vercel.app/summary/${summary._id}`,
+
+      publisher: {
+        "@type": "Organization",
+        name: "BiblioManzil",
+      },
+    }
+  : null;
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -84,22 +110,47 @@ const SummaryDetail: React.FC = () => {
     <>
       {/* 🔥 SEO META TAGS */}
       <Helmet>
-        <title>{summary.bookTitle} Summary | BiblioManzil</title>
 
-        <meta name="description" content={description} />
+        <title>
+        {summary.bookTitle} Summary | BiblioManzil
+        </title>
 
-        {/* Open Graph */}
         <meta
-          property="og:title"
-          content={`${summary.bookTitle} Summary`}
+        name="description"
+        content={description}
         />
-        <meta property="og:description" content={description} />
-        <meta property="og:image" content={summary.coverImage} />
+
         <meta
-          property="og:url"
-          content={`https://biblio-manzil.vercel.app/summary/${summary._id}`}
+        property="og:title"
+        content={`${summary.bookTitle} Summary`}
         />
-        <meta property="og:type" content="article" />
+
+        <meta
+        property="og:description"
+        content={description}
+        />
+
+        <meta
+        property="og:image"
+        content={summary.coverImage}
+        />
+
+        <meta
+        property="og:url"
+        content={`https://biblio-manzil.vercel.app/summary/${summary._id}`}
+        />
+
+        <meta
+        property="og:type"
+        content="book"
+        />
+
+        {bookSchema && (
+        <script type="application/ld+json">
+        {JSON.stringify(bookSchema)}
+        </script>
+        )}
+
       </Helmet>
 
       <div className="pt-32 pb-20 px-6 max-w-5xl mx-auto">
