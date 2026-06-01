@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { motion } from "motion/react";
 import { ArrowRight, BookOpen, Sparkles, Download, Play, Loader2, Quote, Users, Bookmark } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -42,7 +43,42 @@ export default function Home() {
     fetchData();
   }, []);
 
+  const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+
+  name: "BiblioManzil",
+
+  url: "https://biblio-manzil.vercel.app",
+
+  description:
+    "Read motivational blogs, discover book summaries, explore free ebooks and motivational reels.",
+
+  publisher: {
+    "@type": "Organization",
+    name: "BiblioManzil",
+  },
+};
+
   return (
+    <>
+    <Helmet>
+
+      <title>
+        BiblioManzil | Blogs • Book Summaries • Free Ebooks
+      </title>
+
+      <meta
+        name="description"
+        content="Explore motivational blogs, curated book summaries and free ebooks."
+      />
+
+      <script type="application/ld+json">
+        {JSON.stringify(websiteSchema)}
+      </script>
+
+    </Helmet>
+
     <div className="pt-24">
       {/* Hero Section */}
       <section className="px-6 py-20 max-w-7xl mx-auto text-center">
@@ -309,6 +345,7 @@ export default function Home() {
         </div>
       </section>
     </div>
+    </>
   );
 }
 
