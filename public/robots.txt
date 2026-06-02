@@ -1,4 +1,8 @@
 User-agent: *
+
 Allow: /
+
+Disallow: /admin
+Disallow: /dashboard
 
 Sitemap: https://biblio-manzil.vercel.app/sitemap.xml
