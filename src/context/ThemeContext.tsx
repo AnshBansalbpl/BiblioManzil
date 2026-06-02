@@ -8,20 +8,19 @@ ReactNode,
 
 type Theme =
 | "light"
-| "dark"
-| "system";
+| "dark";
 
 type ThemeContextType = {
 theme: Theme;
-
 setTheme: (
 theme: Theme
-) => void;
+)=>void;
 };
 
 const ThemeContext =
 createContext<
-ThemeContextType | null
+ThemeContextType
+| null
 >(null);
 
 export function ThemeProvider({
@@ -31,55 +30,34 @@ children:ReactNode;
 }){
 
 const [theme,setTheme]=
-useState<Theme>("system");
+useState<Theme>(
 
-useEffect(()=>{
-
-const saved =
 localStorage.getItem(
 "theme"
+)==="dark"
+
+? "dark"
+
+: "light"
+
 );
-
-if(
-saved==="light"||
-saved==="dark"||
-saved==="system"
-){
-setTheme(saved);
-}
-
-},[]);
 
 useEffect(()=>{
 
 const root =
 document.documentElement;
 
-root.classList.remove(
-"dark"
-);
-
-let resolved =
-theme;
-
 if(
-theme==="system"
-){
-
-resolved =
-window.matchMedia(
-"(prefers-color-scheme: dark)"
-).matches
-? "dark"
-: "light";
-
-}
-
-if(
-resolved==="dark"
+theme==="dark"
 ){
 
 root.classList.add(
+"dark"
+);
+
+}else{
+
+root.classList.remove(
 "dark"
 );
 
@@ -111,7 +89,7 @@ setTheme,
 
 export function useTheme(){
 
-const context =
+const context=
 useContext(
 ThemeContext
 );
@@ -121,7 +99,7 @@ if(
 ){
 
 throw new Error(
-"useTheme inside ThemeProvider"
+"useTheme must be inside provider"
 );
 
 }
